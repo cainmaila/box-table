@@ -24,8 +24,27 @@
 	// 產生該列的數字陣列
 	const numbers = $derived(generateNumbers(row.startNumber))
 
-	function handleBoxClick(index: number) {
-		rowStore.toggleBox(row.id, index)
+	// 追蹤觸控/滑鼠按下的位置，用於區分點擊和拖曳
+	let pointerDownPos = $state<{ x: number; y: number } | null>(null)
+	const DRAG_THRESHOLD = 5 // 移動超過 5px 視為拖曳
+
+	function handleBoxPointerDown(index: number, e: any) {
+		// 記錄按下的位置
+		pointerDownPos = { x: e.evt.clientX, y: e.evt.clientY }
+	}
+
+	function handleBoxPointerUp(index: number, e: any) {
+		// 檢查是否為點擊（而非拖曳）
+		if (pointerDownPos) {
+			const dx = Math.abs(e.evt.clientX - pointerDownPos.x)
+			const dy = Math.abs(e.evt.clientY - pointerDownPos.y)
+
+			// 如果移動距離小於閾值，視為點擊
+			if (dx < DRAG_THRESHOLD && dy < DRAG_THRESHOLD) {
+				rowStore.toggleBox(row.id, index)
+			}
+		}
+		pointerDownPos = null
 	}
 
 	function handleDeleteClick() {
@@ -58,7 +77,8 @@
 			width={BOX_SIZE}
 			height={BOX_SIZE}
 			fill={isToggled ? 'black' : 'white'}
-			onpointerclick={() => handleBoxClick(index)}
+			onpointerdown={(e) => handleBoxPointerDown(index, e)}
+			onpointerup={(e) => handleBoxPointerUp(index, e)}
 		/>
 
 		<!-- Box 數字 -->

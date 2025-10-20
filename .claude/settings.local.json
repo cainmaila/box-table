@@ -1,7 +1,11 @@
 {
-	"permissions": {
-		"allow": ["Bash(pnpm dev)", "Bash(pnpm check)"],
-		"deny": [],
-		"ask": []
-	}
+  "permissions": {
+    "allow": [
+      "Bash(pnpm dev)",
+      "Bash(pnpm check)",
+      "Bash(pnpm build)"
+    ],
+    "deny": [],
+    "ask": []
+  }
 }

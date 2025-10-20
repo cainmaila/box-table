@@ -3,7 +3,7 @@
 	 * Konva 單一列元件
 	 * 包含：列編號 + 49個box + 刪除按鈕
 	 */
-	import { Layer, Rect, Text, Group } from 'svelte-konva'
+	import { Rect, Text, Group } from 'svelte-konva'
 	import type { Row } from '../types'
 	import { generateNumbers } from '../types'
 	import { rowStore } from '../stores/rowStore.svelte'
@@ -11,10 +11,11 @@
 	interface Props {
 		row: Row
 		yOffset: number // 列的Y軸位置
+		rowIndex: number // 列的索引（從0開始）
 		onDeleteClick: (rowId: number) => void // 刪除按鈕點擊回調
 	}
 
-	let { row, yOffset, onDeleteClick }: Props = $props()
+	let { row, yOffset, rowIndex, onDeleteClick }: Props = $props()
 
 	const BOX_SIZE = 40
 	const LABEL_WIDTH = 60 // 列編號區域寬度
@@ -32,7 +33,8 @@
 	}
 </script>
 
-<Layer>
+<!-- 使用 Group 而不是 Layer -->
+<Group>
 	<!-- 列編號 -->
 	<Text
 		x={10}
@@ -97,4 +99,4 @@
 			listening={false}
 		/>
 	</Group>
-</Layer>
+</Group>

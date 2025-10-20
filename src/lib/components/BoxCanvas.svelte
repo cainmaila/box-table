@@ -4,7 +4,7 @@
 	 * 功能：虛擬滾動 + 縮放/平移
 	 */
 	import { onMount } from 'svelte'
-	import { Stage } from 'svelte-konva'
+	import { Stage, Layer, Line } from 'svelte-konva'
 	import BoxRow from './BoxRow.svelte'
 	import ConfirmDialog from './ConfirmDialog.svelte'
 	import { rowStore } from '../stores/rowStore.svelte'
@@ -52,7 +52,8 @@
 
 		return rows.slice(startIndex, endIndex).map((row, idx) => ({
 			row,
-			yOffset: (startIndex + idx) * rowHeight
+			yOffset: (startIndex + idx) * rowHeight,
+			rowIndex: startIndex + idx // 列的實際索引（從0開始）
 		}))
 	})
 
@@ -140,9 +141,26 @@
 		>
 			<!-- Konva Stage -->
 			<Stage width={stageWidth} height={stageHeight} scaleX={scale} scaleY={scale}>
-				{#each visibleRows as { row, yOffset } (row.id)}
-					<BoxRow {row} {yOffset} onDeleteClick={handleDeleteClick} />
-				{/each}
+				<!-- 主要內容 Layer（包含所有 BoxRow） -->
+				<Layer>
+					{#each visibleRows as { row, yOffset, rowIndex } (row.id)}
+						<BoxRow {row} {yOffset} {rowIndex} onDeleteClick={handleDeleteClick} />
+					{/each}
+				</Layer>
+
+				<!-- 紅色分隔線 Layer（每5列） -->
+				<Layer>
+					{#each visibleRows as { yOffset, rowIndex }}
+						{#if (rowIndex + 1) % 5 === 0}
+							<Line
+								points={[0, yOffset + BOX_SIZE, totalContentWidth, yOffset + BOX_SIZE]}
+								stroke="#ef4444"
+								strokeWidth={2}
+								listening={false}
+							/>
+						{/if}
+					{/each}
+				</Layer>
 			</Stage>
 		</div>
 	</div>

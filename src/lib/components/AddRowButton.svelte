@@ -2,25 +2,25 @@
 	/**
 	 * 新增列按鈕與浮動對話框
 	 */
-	import NumberPicker from './NumberPicker.svelte';
-	import { rowStore, isMaxReached } from '../stores/rowStore.svelte';
+	import NumberPicker from './NumberPicker.svelte'
+	import { rowStore, isMaxReached } from '../stores/rowStore.svelte'
 
-	let showPicker = $state(false);
+	let showPicker = $state(false)
 
 	function openPicker() {
-		showPicker = true;
+		showPicker = true
 	}
 
 	function closePicker() {
-		showPicker = false;
+		showPicker = false
 	}
 
 	function handleSelect(num: number) {
-		const success = rowStore.addRow(num);
+		const success = rowStore.addRow(num)
 		if (success) {
-			closePicker();
+			closePicker()
 		} else {
-			alert('已達到最多1000列的上限');
+			alert('已達到最多1000列的上限')
 		}
 	}
 </script>

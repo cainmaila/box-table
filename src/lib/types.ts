@@ -5,11 +5,11 @@
  */
 export interface Row {
 	/** 列的唯一 ID */
-	id: number;
+	id: number
 	/** 起始數字 (1-49) */
-	startNumber: number;
+	startNumber: number
 	/** 49個box的狀態，true=黑底白字，false=白底黑字 */
-	boxes: boolean[];
+	boxes: boolean[]
 }
 
 /**
@@ -17,7 +17,7 @@ export interface Row {
  */
 export interface StorageData {
 	/** 所有列的陣列 */
-	rows: Row[];
+	rows: Row[]
 }
 
 /**
@@ -25,12 +25,12 @@ export interface StorageData {
  * 例如：startNumber=13 → [13,14,...,49,1,2,...,12]
  */
 export function generateNumbers(startNumber: number): number[] {
-	const numbers: number[] = [];
+	const numbers: number[] = []
 	for (let i = 0; i < 49; i++) {
-		const num = ((startNumber - 1 + i) % 49) + 1;
-		numbers.push(num);
+		const num = ((startNumber - 1 + i) % 49) + 1
+		numbers.push(num)
 	}
-	return numbers;
+	return numbers
 }
 
 /**
@@ -41,5 +41,5 @@ export function createRow(id: number, startNumber: number): Row {
 		id,
 		startNumber,
 		boxes: new Array(49).fill(false)
-	};
+	}
 }

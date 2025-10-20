@@ -3,32 +3,32 @@
 	 * Konva 單一列元件
 	 * 包含：列編號 + 49個box + 刪除按鈕
 	 */
-	import { Layer, Rect, Text, Group } from 'svelte-konva';
-	import type { Row } from '../types';
-	import { generateNumbers } from '../types';
-	import { rowStore } from '../stores/rowStore.svelte';
+	import { Layer, Rect, Text, Group } from 'svelte-konva'
+	import type { Row } from '../types'
+	import { generateNumbers } from '../types'
+	import { rowStore } from '../stores/rowStore.svelte'
 
 	interface Props {
-		row: Row;
-		yOffset: number; // 列的Y軸位置
-		onDeleteClick: (rowId: number) => void; // 刪除按鈕點擊回調
+		row: Row
+		yOffset: number // 列的Y軸位置
+		onDeleteClick: (rowId: number) => void // 刪除按鈕點擊回調
 	}
 
-	let { row, yOffset, onDeleteClick }: Props = $props();
+	let { row, yOffset, onDeleteClick }: Props = $props()
 
-	const BOX_SIZE = 40;
-	const LABEL_WIDTH = 60; // 列編號區域寬度
-	const DELETE_BTN_WIDTH = 80; // 刪除按鈕區域寬度
+	const BOX_SIZE = 40
+	const LABEL_WIDTH = 60 // 列編號區域寬度
+	const DELETE_BTN_WIDTH = 80 // 刪除按鈕區域寬度
 
 	// 產生該列的數字陣列
-	const numbers = $derived(generateNumbers(row.startNumber));
+	const numbers = $derived(generateNumbers(row.startNumber))
 
 	function handleBoxClick(index: number) {
-		rowStore.toggleBox(row.id, index);
+		rowStore.toggleBox(row.id, index)
 	}
 
 	function handleDeleteClick() {
-		onDeleteClick(row.id);
+		onDeleteClick(row.id)
 	}
 </script>
 

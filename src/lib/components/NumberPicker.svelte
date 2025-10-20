@@ -4,16 +4,16 @@
 	 */
 
 	interface Props {
-		onselect: (number: number) => void;
+		onselect: (number: number) => void
 	}
 
-	let { onselect }: Props = $props();
+	let { onselect }: Props = $props()
 
 	// 產生 1-49 的數字陣列
-	const numbers = Array.from({ length: 49 }, (_, i) => i + 1);
+	const numbers = Array.from({ length: 49 }, (_, i) => i + 1)
 
 	function handleSelect(num: number) {
-		onselect(num);
+		onselect(num)
 	}
 </script>
 

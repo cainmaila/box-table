@@ -2,16 +2,16 @@
 	/**
 	 * Box Table 主頁面
 	 */
-	import { onMount } from 'svelte';
-	import AddRowButton from '$lib/components/AddRowButton.svelte';
+	import { onMount } from 'svelte'
+	import AddRowButton from '$lib/components/AddRowButton.svelte'
 
 	// 動態載入 Canvas 元件（避免 SSR 問題）
-	let BoxCanvas: any;
+	let BoxCanvas: any
 
 	onMount(async () => {
-		const module = await import('$lib/components/BoxCanvas.svelte');
-		BoxCanvas = module.default;
-	});
+		const module = await import('$lib/components/BoxCanvas.svelte')
+		BoxCanvas = module.default
+	})
 </script>
 
 <div class="app-container">

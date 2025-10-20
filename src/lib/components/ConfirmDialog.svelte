@@ -4,12 +4,12 @@
 	 */
 
 	interface Props {
-		message: string;
-		onconfirm: () => void;
-		oncancel: () => void;
+		message: string
+		onconfirm: () => void
+		oncancel: () => void
 	}
 
-	let { message, onconfirm, oncancel }: Props = $props();
+	let { message, onconfirm, oncancel }: Props = $props()
 </script>
 
 <div class="overlay" onclick={oncancel} role="presentation">

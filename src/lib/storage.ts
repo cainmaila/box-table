@@ -1,26 +1,26 @@
 // localStorage 工具函式
 
-import type { StorageData, Row } from './types';
+import type { StorageData, Row } from './types'
 
-const STORAGE_KEY = 'box-table-data';
+const STORAGE_KEY = 'box-table-data'
 
 /**
  * 從 localStorage 載入資料
  */
 export function loadFromStorage(): StorageData {
 	if (typeof window === 'undefined') {
-		return { rows: [] };
+		return { rows: [] }
 	}
 
 	try {
-		const data = localStorage.getItem(STORAGE_KEY);
+		const data = localStorage.getItem(STORAGE_KEY)
 		if (!data) {
-			return { rows: [] };
+			return { rows: [] }
 		}
-		return JSON.parse(data) as StorageData;
+		return JSON.parse(data) as StorageData
 	} catch (error) {
-		console.error('載入資料失敗:', error);
-		return { rows: [] };
+		console.error('載入資料失敗:', error)
+		return { rows: [] }
 	}
 }
 
@@ -29,13 +29,13 @@ export function loadFromStorage(): StorageData {
  */
 export function saveToStorage(data: StorageData): void {
 	if (typeof window === 'undefined') {
-		return;
+		return
 	}
 
 	try {
-		localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+		localStorage.setItem(STORAGE_KEY, JSON.stringify(data))
 	} catch (error) {
-		console.error('儲存資料失敗:', error);
+		console.error('儲存資料失敗:', error)
 	}
 }
 
@@ -44,12 +44,12 @@ export function saveToStorage(data: StorageData): void {
  */
 export function clearStorage(): void {
 	if (typeof window === 'undefined') {
-		return;
+		return
 	}
 
 	try {
-		localStorage.removeItem(STORAGE_KEY);
+		localStorage.removeItem(STORAGE_KEY)
 	} catch (error) {
-		console.error('清除資料失敗:', error);
+		console.error('清除資料失敗:', error)
 	}
 }

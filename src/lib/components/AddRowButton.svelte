@@ -3,7 +3,18 @@
 	 * 新增列按鈕與浮動對話框
 	 */
 	import NumberPicker from './NumberPicker.svelte'
-	import { rowStore, isMaxReached } from '../stores/rowStore.svelte'
+	import { stores, isMaxReachedStores } from '../stores/rowStore.svelte'
+	import type { BoxMode } from '../types'
+
+	interface Props {
+		mode: BoxMode
+	}
+
+	let { mode }: Props = $props()
+
+	// 根據模式取得對應的 store
+	const rowStore = $derived(stores[mode])
+	const isMaxReached = $derived(isMaxReachedStores[mode])
 
 	let showPicker = $state(false)
 
@@ -38,7 +49,7 @@
 {#if showPicker}
 	<div class="overlay" onclick={closePicker} role="presentation">
 		<div class="picker-wrapper" onclick={(e) => e.stopPropagation()} role="dialog">
-			<NumberPicker onselect={handleSelect} />
+			<NumberPicker {mode} onselect={handleSelect} />
 			<button class="close-btn" onclick={closePicker} type="button">✕</button>
 		</div>
 	</div>
@@ -49,13 +60,10 @@
 		display: flex;
 		align-items: center;
 		gap: 0.75rem;
-		padding: 0.5rem 1rem;
-		background: white;
-		border-bottom: 1px solid #e5e7eb;
 	}
 
 	.add-btn {
-		padding: 0.5rem 1.25rem;
+		padding: 0.5rem 1rem;
 		background: #3b82f6;
 		color: white;
 		border: none;
@@ -64,12 +72,12 @@
 		font-weight: 500;
 		cursor: pointer;
 		transition: all 0.2s;
+		white-space: nowrap;
 	}
 
 	.add-btn:hover:not(:disabled) {
 		background: #2563eb;
-		transform: translateY(-1px);
-		box-shadow: 0 4px 6px rgba(59, 130, 246, 0.3);
+		box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3);
 	}
 
 	.add-btn:active:not(:disabled) {

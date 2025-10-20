@@ -1,16 +1,20 @@
 <script lang="ts">
 	/**
-	 * 7x7 網格數字選擇器 (1-49)
+	 * 動態網格數字選擇器
+	 * 根據模式顯示不同數量的數字（49/39/38）
 	 */
+	import { MODE_CONFIGS, type BoxMode } from '../types'
 
 	interface Props {
+		mode: BoxMode
 		onselect: (number: number) => void
 	}
 
-	let { onselect }: Props = $props()
+	let { mode, onselect }: Props = $props()
 
-	// 產生 1-49 的數字陣列
-	const numbers = Array.from({ length: 49 }, (_, i) => i + 1)
+	// 根據模式產生數字陣列
+	const config = $derived(MODE_CONFIGS[mode])
+	const numbers = $derived(Array.from({ length: config.maxNumber }, (_, i) => i + 1))
 
 	function handleSelect(num: number) {
 		onselect(num)
@@ -18,8 +22,8 @@
 </script>
 
 <div class="number-picker">
-	<h3>選擇起始數字 (1-49)</h3>
-	<div class="grid">
+	<h3>選擇起始數字 (1-{config.maxNumber})</h3>
+	<div class="grid" style:grid-template-columns="repeat({config.gridLayout.cols}, 1fr)">
 		{#each numbers as num}
 			<button class="number-button" onclick={() => handleSelect(num)} type="button">
 				{num}
@@ -47,7 +51,7 @@
 
 	.grid {
 		display: grid;
-		grid-template-columns: repeat(7, 1fr);
+		/* grid-template-columns 由 inline style 動態設定 */
 		gap: 0.5rem;
 	}
 

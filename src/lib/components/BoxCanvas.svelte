@@ -12,10 +12,15 @@
 	import { Stage, Layer, Line } from 'svelte-konva'
 	import BoxRow from './BoxRow.svelte'
 	import ConfirmDialog from './ConfirmDialog.svelte'
-	import { rowStore } from '../stores/rowStore.svelte'
+	import { stores } from '../stores/rowStore.svelte'
+	import { MODE_CONFIGS, type BoxMode } from '../types'
+	import { BOX_SIZE } from '../constants'
 
-	const BOX_SIZE = 40
-	const HEADER_HEIGHT = 45 // 頂部按鈕區域高度（已縮減）
+	interface Props {
+		mode: BoxMode
+	}
+
+	let { mode }: Props = $props()
 
 	let containerWidth = $state(0)
 	let containerHeight = $state(0)
@@ -31,6 +36,10 @@
 
 	let containerEl: HTMLDivElement
 	let scrollContainerEl: HTMLDivElement
+
+	// 根據模式取得對應的 store 和配置
+	const rowStore = $derived(stores[mode])
+	const config = $derived(MODE_CONFIGS[mode])
 
 	// 取得 store 資料
 	let rows = $state($rowStore)
@@ -64,8 +73,8 @@
 
 	// 計算總內容高度與寬度
 	const totalContentHeight = $derived(rows ? rows.length * BOX_SIZE : 0)
-	// 列編號60 + 49個box(1960) + 刪除按鈕90 + 右側padding20 = 2130px
-	const totalContentWidth = 2130
+	// 根據模式動態計算寬度
+	const totalContentWidth = $derived(config.totalWidth)
 
 	// 計算 Stage 尺寸
 	// Stage 的寬度和高度都應該匹配內容大小，這樣可以正確限制滾動範圍
@@ -149,7 +158,7 @@
 				<!-- 主要內容 Layer（包含所有 BoxRow） -->
 				<Layer>
 					{#each visibleRows as { row, yOffset, rowIndex } (row.id)}
-						<BoxRow {row} {yOffset} {rowIndex} onDeleteClick={handleDeleteClick} />
+						<BoxRow {row} {yOffset} {rowIndex} {mode} onDeleteClick={handleDeleteClick} />
 					{/each}
 				</Layer>
 

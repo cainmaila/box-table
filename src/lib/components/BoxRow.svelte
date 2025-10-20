@@ -1,28 +1,33 @@
 <script lang="ts">
 	/**
 	 * Konva 單一列元件
-	 * 包含：列編號 + 49個box + 刪除按鈕
+	 * 包含：列編號 + N個box + 刪除按鈕（N根據模式而定）
 	 */
 	import { Rect, Text, Group } from 'svelte-konva'
-	import type { Row } from '../types'
-	import { generateNumbers } from '../types'
-	import { rowStore } from '../stores/rowStore.svelte'
+	import type { Row, BoxMode } from '../types'
+	import { generateNumbers, MODE_CONFIGS } from '../types'
+	import { stores } from '../stores/rowStore.svelte'
+	import { BOX_SIZE, LABEL_WIDTH, DELETE_BTN_WIDTH } from '../constants'
+	import { calculateBoxX, calculateDeleteButtonX, calculateCenterY } from '../utils'
 
 	interface Props {
 		row: Row
 		yOffset: number // 列的Y軸位置
 		rowIndex: number // 列的索引（從0開始）
+		mode: BoxMode // 當前模式
 		onDeleteClick: (rowId: number) => void // 刪除按鈕點擊回調
 	}
 
-	let { row, yOffset, rowIndex, onDeleteClick }: Props = $props()
+	let { row, yOffset, rowIndex, mode, onDeleteClick }: Props = $props()
 
-	const BOX_SIZE = 40
-	const LABEL_WIDTH = 60 // 列編號區域寬度
-	const DELETE_BTN_WIDTH = 80 // 刪除按鈕區域寬度
+	// 取得當前模式的配置
+	const config = $derived(MODE_CONFIGS[mode])
 
 	// 產生該列的數字陣列
-	const numbers = $derived(generateNumbers(row.startNumber))
+	const numbers = $derived(generateNumbers(row.startNumber, config.maxNumber, config.boxCount))
+
+	// 取得當前模式的 store
+	const rowStore = $derived(stores[mode])
 
 	// 處理 box 點擊（使用 tap 事件，自動區分點擊和拖曳）
 	function handleBoxTap(index: number) {
@@ -48,10 +53,10 @@
 		verticalAlign="middle"
 	/>
 
-	<!-- 49個box -->
+	<!-- 動態數量的 box -->
 	{#each numbers as num, index}
 		{@const isToggled = row.boxes[index]}
-		{@const xPos = LABEL_WIDTH + index * BOX_SIZE}
+		{@const xPos = calculateBoxX(index, LABEL_WIDTH, BOX_SIZE)}
 
 		<!-- Box 背景 -->
 		<Rect
@@ -81,17 +86,19 @@
 
 	<!-- 刪除按鈕 (使用 Rect + Text 模擬按鈕) -->
 	<Group preventDefault={false} ontap={handleDeleteClick}>
+		{@const deleteX = calculateDeleteButtonX(config.boxCount, LABEL_WIDTH, BOX_SIZE)}
+		{@const deleteY = calculateCenterY(yOffset, BOX_SIZE, 30)}
 		<Rect
-			x={LABEL_WIDTH + 49 * BOX_SIZE + 10}
-			y={yOffset + (BOX_SIZE - 30) / 2}
+			x={deleteX}
+			y={deleteY}
 			width={DELETE_BTN_WIDTH}
 			height={30}
 			fill="#ef4444"
 			cornerRadius={4}
 		/>
 		<Text
-			x={LABEL_WIDTH + 49 * BOX_SIZE + 10}
-			y={yOffset + (BOX_SIZE - 30) / 2}
+			x={deleteX}
+			y={deleteY}
 			width={DELETE_BTN_WIDTH}
 			height={30}
 			text="刪除"

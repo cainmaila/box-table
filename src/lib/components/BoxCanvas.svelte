@@ -2,6 +2,11 @@
 	/**
 	 * Konva 主畫面元件
 	 * 功能：虛擬滾動 + 縮放/平移
+	 *
+	 * 觸控滾動機制：
+	 * - 使用 HTML 原生滾動（scroll-container）
+	 * - Konva box 設定 preventDefault={false} 允許觸控滾動
+	 * - 使用 tap 事件區分點擊和拖曳（Konva 自動處理）
 	 */
 	import { onMount } from 'svelte'
 	import { Stage, Layer, Line } from 'svelte-konva'

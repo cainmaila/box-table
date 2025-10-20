@@ -7,6 +7,7 @@
 ### 部署流程
 
 1. **推送代碼到 main 分支**
+
    ```bash
    git add .
    git commit -m "your commit message"
@@ -29,6 +30,7 @@
 ### 配置說明
 
 #### svelte.config.js
+
 ```javascript
 adapter: adapter({
   pages: 'build',
@@ -47,26 +49,32 @@ paths: {
 - 生產環境（`pnpm build`）使用 `/box-table` 路徑
 
 #### .github/workflows/deploy.yml
+
 GitHub Actions workflow 配置，自動在推送到 main 分支時觸發部署。
 
 ### 本地測試
 
 #### 開發模式（無 base path）
+
 ```bash
 pnpm dev
 ```
+
 訪問：http://localhost:5173/
 
 #### 生產構建（含 base path）
+
 ```bash
 NODE_ENV=production pnpm build
 pnpm preview
 ```
+
 訪問：http://localhost:4173/box-table/
 
 ### 部署後訪問
 
 部署成功後，你的應用將可在以下網址訪問：
+
 ```
 https://<username>.github.io/box-table/
 ```
@@ -76,19 +84,24 @@ https://<username>.github.io/box-table/
 ### 故障排除
 
 #### 資源 404 錯誤
+
 如果部署後資源無法加載，檢查：
+
 1. `svelte.config.js` 中的 `base` 路徑是否正確
 2. GitHub Pages 設定是否啟用
 3. GitHub Actions workflow 是否成功執行
 
 #### 更改倉庫名稱
+
 如果倉庫名稱不是 `box-table`，需要修改：
+
 1. `svelte.config.js` 中的 `paths.base`
 2. 重新構建並推送
 
 ### 手動部署
 
 如果需要手動部署：
+
 ```bash
 # 構建
 NODE_ENV=production pnpm build

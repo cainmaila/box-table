@@ -4,9 +4,9 @@
 	 * 包含：列編號 + N個box + 刪除按鈕（N根據模式而定）
 	 */
 	import { Rect, Text, Group } from 'svelte-konva'
-	import type { Row, BoxMode } from '../types'
+	import type { Row, BoxMode, SubTab } from '../types'
 	import { generateNumbers, MODE_CONFIGS } from '../types'
-	import { stores } from '../stores/rowStore.svelte'
+	import { getStore } from '../stores/rowStore.svelte'
 	import { BOX_SIZE, LABEL_WIDTH, DELETE_BTN_WIDTH } from '../constants'
 	import { calculateBoxX, calculateDeleteButtonX, calculateCenterY } from '../utils'
 
@@ -15,10 +15,11 @@
 		yOffset: number // 列的Y軸位置
 		rowIndex: number // 列的索引（從0開始）
 		mode: BoxMode // 當前模式
+		subTab: SubTab // 當前 SubTab
 		onDeleteClick: (rowId: number) => void // 刪除按鈕點擊回調
 	}
 
-	let { row, yOffset, rowIndex, mode, onDeleteClick }: Props = $props()
+	let { row, yOffset, rowIndex, mode, subTab, onDeleteClick }: Props = $props()
 
 	// 取得當前模式的配置
 	const config = $derived(MODE_CONFIGS[mode])
@@ -26,8 +27,8 @@
 	// 產生該列的數字陣列
 	const numbers = $derived(generateNumbers(row.startNumber, config.maxNumber, config.boxCount))
 
-	// 取得當前模式的 store
-	const rowStore = $derived(stores[mode])
+	// 取得當前模式和 subTab 的 store
+	const rowStore = $derived(getStore(mode, subTab))
 
 	// 處理 box 點擊（使用 tap 事件，自動區分點擊和拖曳）
 	function handleBoxTap(index: number) {

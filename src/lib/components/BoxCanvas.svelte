@@ -159,7 +159,7 @@
 				<!-- 主要內容 Layer（包含所有 BoxRow） -->
 				<Layer>
 					{#each visibleRows as { row, yOffset, rowIndex } (row.id)}
-						<BoxRow {row} {yOffset} {rowIndex} {mode} onDeleteClick={handleDeleteClick} />
+						<BoxRow {row} {yOffset} {rowIndex} {mode} {subTab} onDeleteClick={handleDeleteClick} />
 					{/each}
 				</Layer>
 

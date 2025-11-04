@@ -29,6 +29,3 @@ export const ACTIVE_MODE_KEY = 'box-table-active-tab'
 
 /** 當前活動 SubTab 的 localStorage key 前綴 */
 export const ACTIVE_SUBTAB_PREFIX = 'box-table-active-subtab-'
-
-/** 舊版本資料的 localStorage key（用於遷移） */
-export const LEGACY_STORAGE_KEY = 'box-table-data'

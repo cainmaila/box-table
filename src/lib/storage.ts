@@ -5,8 +5,7 @@ import {
 	STORAGE_KEY_PREFIX,
 	ACTIVE_MODE_KEY,
 	ACTIVE_SUBTAB_PREFIX,
-	DEFAULT_SUBTAB,
-	LEGACY_STORAGE_KEY
+	DEFAULT_SUBTAB
 } from './constants'
 
 /**
@@ -169,32 +168,4 @@ export function getActiveTab(): BoxMode {
  */
 export function setActiveTab(mode: BoxMode): void {
 	setActiveMode(mode)
-}
-
-/**
- * 遷移舊版本資料到新格式
- * 將 'box-table-data' 遷移到 'box-table-data-49'
- */
-export function migrateOldData(): void {
-	if (typeof window === 'undefined') {
-		return
-	}
-
-	try {
-		// 檢查是否有舊資料
-		const oldData = localStorage.getItem(LEGACY_STORAGE_KEY)
-		const newKey = getStorageKey('49')
-
-		// 如果有舊資料且新格式還沒有資料，則遷移
-		if (oldData && !localStorage.getItem(newKey)) {
-			localStorage.setItem(newKey, oldData)
-			localStorage.setItem(ACTIVE_MODE_KEY, '49')
-			console.log('資料已從舊格式遷移到新格式 (49 模式)')
-
-			// 可選：刪除舊資料（暫時保留以防萬一）
-			// localStorage.removeItem(OLD_STORAGE_KEY)
-		}
-	} catch (error) {
-		console.error('遷移舊資料失敗:', error)
-	}
 }

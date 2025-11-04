@@ -7,13 +7,7 @@
 	import TabSwitcher from '$lib/components/TabSwitcher.svelte'
 	import SubTabSelector from '$lib/components/SubTabSelector.svelte'
 	import AddRowButton from '$lib/components/AddRowButton.svelte'
-	import {
-		getActiveMode,
-		getActiveSubTab,
-		setActiveMode,
-		setActiveSubTab,
-		migrateOldData
-	} from '$lib/storage'
+	import { getActiveMode, getActiveSubTab, setActiveMode, setActiveSubTab } from '$lib/storage'
 	import type { BoxMode, SubTab } from '$lib/types'
 	import { DEFAULT_SUBTAB } from '$lib/constants'
 
@@ -26,9 +20,6 @@
 	let BoxCanvas = $state<any>(null)
 
 	onMount(async () => {
-		// 執行資料遷移（將舊格式資料遷移到新格式）
-		migrateOldData()
-
 		// 載入上次選中的主模式
 		currentMode = getActiveMode()
 		// 載入該模式的當前 SubTab

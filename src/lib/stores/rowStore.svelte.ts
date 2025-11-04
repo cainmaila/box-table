@@ -12,11 +12,19 @@ import { MAX_ROWS, DEFAULT_SUBTAB } from '../constants'
 function createRowStore(mode: BoxMode, subTab: SubTab = DEFAULT_SUBTAB) {
 	const config = MODE_CONFIGS[mode]
 
-	// 初始化資料
-	const initialData = typeof window !== 'undefined' ? loadFromStorage(mode, subTab) : { rows: [] }
-	const { subscribe, update } = writable<Row[]>(initialData.rows)
+	// 服務器端始終使用空數組，避免 SSR hydration 問題
+	const { subscribe, set, update } = writable<Row[]>([])
 
-	let nextId = initialData.rows.length > 0 ? Math.max(...initialData.rows.map((r) => r.id)) + 1 : 1
+	let nextId = 1
+
+	// 瀏覽器端載入數據
+	if (typeof window !== 'undefined') {
+		const initialData = loadFromStorage(mode, subTab)
+		if (initialData.rows.length > 0) {
+			set(initialData.rows)
+			nextId = Math.max(...initialData.rows.map((r) => r.id)) + 1
+		}
+	}
 
 	function save(rows: Row[]) {
 		saveToStorage(mode, { rows }, subTab)

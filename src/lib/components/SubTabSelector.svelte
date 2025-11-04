@@ -19,7 +19,7 @@
 </script>
 
 <div class="subtab-selector">
-	<div class="subtab-label">第 {currentMode} 期：</div>
+	<div class="subtab-label">{currentMode} 玩法：</div>
 	<div class="subtab-tabs">
 		{#each tabs as tab}
 			<button

@@ -12,15 +12,16 @@
 	import { Stage, Layer, Line } from 'svelte-konva'
 	import BoxRow from './BoxRow.svelte'
 	import ConfirmDialog from './ConfirmDialog.svelte'
-	import { stores } from '../stores/rowStore.svelte'
-	import { MODE_CONFIGS, type BoxMode } from '../types'
+	import { getStore } from '../stores/rowStore.svelte'
+	import { MODE_CONFIGS, type BoxMode, type SubTab } from '../types'
 	import { BOX_SIZE } from '../constants'
 
 	interface Props {
 		mode: BoxMode
+		subTab: SubTab
 	}
 
-	let { mode }: Props = $props()
+	let { mode, subTab }: Props = $props()
 
 	let containerWidth = $state(0)
 	let containerHeight = $state(0)
@@ -37,8 +38,8 @@
 	let containerEl: HTMLDivElement
 	let scrollContainerEl: HTMLDivElement
 
-	// 根據模式取得對應的 store 和配置
-	const rowStore = $derived(stores[mode])
+	// 根據模式和 subTab 取得對應的 store 和配置
+	const rowStore = $derived(getStore(mode, subTab))
 	const config = $derived(MODE_CONFIGS[mode])
 
 	// 取得 store 資料

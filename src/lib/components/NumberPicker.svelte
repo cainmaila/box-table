@@ -3,14 +3,15 @@
 	 * 動態網格數字選擇器
 	 * 根據模式顯示不同數量的數字（49/39/38）
 	 */
-	import { MODE_CONFIGS, type BoxMode } from '../types'
+	import { MODE_CONFIGS, type BoxMode, type SubTab } from '../types'
 
 	interface Props {
 		mode: BoxMode
+		subTab: SubTab
 		onselect: (number: number) => void
 	}
 
-	let { mode, onselect }: Props = $props()
+	let { mode, subTab, onselect }: Props = $props()
 
 	// 根據模式產生數字陣列
 	const config = $derived(MODE_CONFIGS[mode])

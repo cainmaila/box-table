@@ -3,18 +3,19 @@
 	 * 新增列按鈕與浮動對話框
 	 */
 	import NumberPicker from './NumberPicker.svelte'
-	import { stores, isMaxReachedStores } from '../stores/rowStore.svelte'
-	import type { BoxMode } from '../types'
+	import { getStore, getIsMaxReachedStore } from '../stores/rowStore.svelte'
+	import type { BoxMode, SubTab } from '../types'
 
 	interface Props {
 		mode: BoxMode
+		subTab: SubTab
 	}
 
-	let { mode }: Props = $props()
+	let { mode, subTab }: Props = $props()
 
-	// 根據模式取得對應的 store
-	const rowStore = $derived(stores[mode])
-	const isMaxReached = $derived(isMaxReachedStores[mode])
+	// 根據模式和 subTab 取得對應的 store
+	const rowStore = $derived(getStore(mode, subTab))
+	const isMaxReached = $derived(getIsMaxReachedStore(mode, subTab))
 
 	let showPicker = $state(false)
 
@@ -49,7 +50,7 @@
 {#if showPicker}
 	<div class="overlay" onclick={closePicker} role="presentation">
 		<div class="picker-wrapper" onclick={(e) => e.stopPropagation()} role="dialog">
-			<NumberPicker {mode} onselect={handleSelect} />
+			<NumberPicker {mode} {subTab} onselect={handleSelect} />
 			<button class="close-btn" onclick={closePicker} type="button">✕</button>
 		</div>
 	</div>

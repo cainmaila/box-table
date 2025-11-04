@@ -2,24 +2,24 @@
 
 import { writable, derived } from 'svelte/store'
 import { createRow, MODE_CONFIGS } from '../types'
-import type { Row, BoxMode } from '../types'
+import type { Row, BoxMode, SubTab } from '../types'
 import { loadFromStorage, saveToStorage } from '../storage'
-import { MAX_ROWS } from '../constants'
+import { MAX_ROWS, DEFAULT_SUBTAB } from '../constants'
 
 /**
- * 創建指定模式的 row store（工廠函式）
+ * 創建指定模式和 subTab 的 row store（工廠函式）
  */
-function createRowStore(mode: BoxMode) {
+function createRowStore(mode: BoxMode, subTab: SubTab = DEFAULT_SUBTAB) {
 	const config = MODE_CONFIGS[mode]
 
 	// 初始化資料
-	const initialData = typeof window !== 'undefined' ? loadFromStorage(mode) : { rows: [] }
+	const initialData = typeof window !== 'undefined' ? loadFromStorage(mode, subTab) : { rows: [] }
 	const { subscribe, update } = writable<Row[]>(initialData.rows)
 
 	let nextId = initialData.rows.length > 0 ? Math.max(...initialData.rows.map((r) => r.id)) + 1 : 1
 
 	function save(rows: Row[]) {
-		saveToStorage(mode, { rows })
+		saveToStorage(mode, { rows }, subTab)
 	}
 
 	return {
@@ -78,11 +78,11 @@ function createRowStore(mode: BoxMode) {
 	}
 }
 
-// 為每個模式創建獨立的 store
+// 為每個模式的第 1 頁創建預設 store（向後兼容）
 export const stores = {
-	'49': createRowStore('49'),
-	'39': createRowStore('39'),
-	'38': createRowStore('38')
+	'49': createRowStore('49', 1),
+	'39': createRowStore('39', 1),
+	'38': createRowStore('38', 1)
 }
 
 // 為每個模式創建 isMaxReached 衍生 store
@@ -92,6 +92,66 @@ export const isMaxReachedStores = {
 	'38': derived(stores['38'], ($rows) => $rows.length >= MAX_ROWS)
 }
 
-// 向後兼容：保留原來的 export（預設為 49 模式）
+// 所有 store 的嵌套結構（延遲初始化）
+type StoreInstance = ReturnType<typeof createRowStore>
+const allStores: Partial<Record<BoxMode, Partial<Record<SubTab, StoreInstance>>>> = {}
+
+// 所有 isMaxReached store 的嵌套結構（延遲初始化）
+type DerivedStoreBoolean = ReturnType<typeof derived<StoreInstance, boolean>>
+const allIsMaxReachedStores: Partial<
+	Record<BoxMode, Partial<Record<SubTab, DerivedStoreBoolean>>>
+> = {}
+
+/**
+ * 獲取指定模式和 subTab 的 store
+ * 延遲初始化：只在需要時創建 store
+ */
+export function getStore(mode: BoxMode, subTab: SubTab = DEFAULT_SUBTAB): StoreInstance {
+	// 第 1 頁返回預設 store（向後兼容）
+	if (subTab === 1) {
+		return stores[mode]
+	}
+
+	// 確保模式的嵌套對象存在
+	if (!allStores[mode]) {
+		allStores[mode] = {}
+	}
+
+	// 延遲創建 store
+	if (!allStores[mode]![subTab]) {
+		allStores[mode]![subTab] = createRowStore(mode, subTab)
+	}
+
+	return allStores[mode]![subTab]!
+}
+
+/**
+ * 獲取指定模式和 subTab 的 isMaxReached store
+ * 延遲初始化：只在需要時創建 derived store
+ */
+export function getIsMaxReachedStore(
+	mode: BoxMode,
+	subTab: SubTab = DEFAULT_SUBTAB
+): DerivedStoreBoolean {
+	// 第 1 頁返回預設 store（向後兼容）
+	if (subTab === 1) {
+		return isMaxReachedStores[mode]
+	}
+
+	// 確保模式的嵌套對象存在
+	if (!allIsMaxReachedStores[mode]) {
+		allIsMaxReachedStores[mode] = {}
+	}
+
+	// 延遲創建 derived store
+	if (!allIsMaxReachedStores[mode]![subTab]) {
+		const store = getStore(mode, subTab)
+		allIsMaxReachedStores[mode]![subTab] = derived(store, ($rows) => $rows.length >= MAX_ROWS)
+	}
+
+	return allIsMaxReachedStores[mode]![subTab]!
+}
+
+// 向後兼容：保留原來的 export（預設為 49 模式，第 1 頁）
 export const rowStore = stores['49']
 export const isMaxReached = isMaxReachedStores['49']

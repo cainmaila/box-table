@@ -6,6 +6,19 @@
 export type BoxMode = '49' | '39' | '38'
 
 /**
+ * SubTab 類型：1-10 的 tab 頁面
+ */
+export type SubTab = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10
+
+/**
+ * 模式位置：主模式 + 子 tab
+ */
+export interface ModeLocation {
+	mode: BoxMode
+	subTab: SubTab
+}
+
+/**
  * 模式配置
  */
 export interface ModeConfig {
